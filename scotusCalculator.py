@@ -4,7 +4,7 @@ loop = True
 while loop:
     try:
         fileName = input("Enter file path:\n")
-        casesFile = open(fileName)
+        casesFile = open(fileName, errors="ignore")
         loop = False
     except FileNotFoundError:
         print("File not found.", end=" ")
@@ -56,7 +56,8 @@ varianceNine = squaredDiffSumNine / numCasesNine
 stdDev = variance ** 0.5
 stdDevNine = varianceNine ** 0.5
 
-
+print("Total cases:")
+print(numCases)
 print("Average difference between majority and minority vote count:")
 print(avgDiff)
 print("Standard deviation:")
@@ -64,7 +65,12 @@ print(stdDev)
 
 print()
 
+print("Total nine-justice cases:")
+print(numCasesNine)
 print("Average difference (including only nine-justice cases):")
 print(avgDiffNine)
 print("Standard deviation:")
 print(stdDevNine)
+
+
+input("Press ENTER to exit")
