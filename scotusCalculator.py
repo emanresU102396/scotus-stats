@@ -71,6 +71,3 @@ print("Average difference (including only nine-justice cases):")
 print(avgDiffNine)
 print("Standard deviation:")
 print(stdDevNine)
-
-
-input("Press ENTER to exit")
