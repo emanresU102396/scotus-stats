@@ -1,4 +1,8 @@
 import csv
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
 
 loop = True
 while loop:
@@ -17,27 +21,29 @@ numCases = 0
 numCasesNine = 0
 
 diffList = []
+dateList = []
 diffListNine = []
+dateListNine = []
 
-# Uncomment the commented lines to print out every single case with its corresponding data points
-# (May take a while)
+century = 1900
+lastYear = 0
+
 for item in caseReader:
         if item[0] == "":
             break
         if item[51] != "majVotes":
             numCases += 1
-#            print(item[14] + "\t(" + item[51] + "-" + item[52] + ")")
-#            print("Majority votes: " + item[51] + "\tMinority votes: " + item[52] +
-#                  "\tDifference: " + str(int(item[51]) - int(item[52])) + "\tTotal votes: " + str(int(item[51]) + int(item[52])))
             totalDiff += int(item[51]) - int(item[52])
             diffList.append(int(item[51]) - int(item[52]))
+            if (century + int(item[4][-2:])) < lastYear - 50:
+                century = 2000
+            dateList.append(century + int(item[4][-2:]))
             if int(item[51]) + int(item[52]) == 9:
+                dateListNine.append(century + int(item[4][-2:]))
                 diffListNine.append(int(item[51]) - int(item[52]))
                 totalDiffNine += int(item[51]) - int(item[52])
                 numCasesNine += 1
-#            print("----------------------------------------------------------")
-
-#print("==============================================================")
+            lastYear = dateList[-1]
 
 avgDiff = float(totalDiff)/numCases
 avgDiffNine = float(totalDiffNine)/numCasesNine
@@ -71,3 +77,28 @@ print("Average difference (including only nine-justice cases):")
 print(avgDiffNine)
 print("Standard deviation:")
 print(stdDevNine)
+print()
+
+divisiveList = [4-((x - 1) / 2) for x in diffList]
+divisiveListNine = [ 4-((x-1) / 2) for x in diffListNine]
+
+x = np.array(dateListNine)
+y = np.array(divisiveListNine)
+m, b, r_value, p_value, std_err = stats.linregress(x, y)
+
+
+plt.plot(x, y, 'ro')
+plt.plot(x, m*x + b)
+
+print("Line of best fit: " + str(m)+ "x + " + str(b))
+print("R = " + str(r_value))
+print("R^2 = " + str(r_value ** 2))
+
+plt.xticks(range(dateListNine[0], dateListNine[-1], 10))
+plt.yticks([0,1,2,3,4])
+
+plt.title("Divisiveness of Landmark Supreme Court Decisions Over Time")
+plt.xlabel("Year")
+plt.ylabel("Divisiveness")
+
+plt.show()
